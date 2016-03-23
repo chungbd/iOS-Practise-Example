@@ -15,6 +15,9 @@
 		89601A101C7B5B060032B52F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89601A0E1C7B5B060032B52F /* LaunchScreen.storyboard */; };
 		89601A1C1C7B666D0032B52F /* RegularExpressionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 89601A1A1C7B666D0032B52F /* RegularExpressionVC.m */; };
 		89601A1D1C7B666D0032B52F /* RegularExpressionVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 89601A1B1C7B666D0032B52F /* RegularExpressionVC.xib */; };
+		9608F4B11C900151006A078E /* VideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9608F4B01C900151006A078E /* VideoCell.m */; };
+		965DC0F01C8FDE5100272538 /* ShowingVideoListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965DC0EF1C8FDE5100272538 /* ShowingVideoListVC.m */; };
+		965DC0F41C8FDFAE00272538 /* AVFoundation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 965DC0F31C8FDFAE00272538 /* AVFoundation.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +36,11 @@
 		89601A1A1C7B666D0032B52F /* RegularExpressionVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegularExpressionVC.m; sourceTree = "<group>"; };
 		89601A1B1C7B666D0032B52F /* RegularExpressionVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RegularExpressionVC.xib; sourceTree = "<group>"; };
 		89601A1E1C7B67B70032B52F /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		9608F4AF1C900151006A078E /* VideoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCell.h; sourceTree = "<group>"; };
+		9608F4B01C900151006A078E /* VideoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoCell.m; sourceTree = "<group>"; };
+		965DC0EE1C8FDE5100272538 /* ShowingVideoListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowingVideoListVC.h; sourceTree = "<group>"; };
+		965DC0EF1C8FDE5100272538 /* ShowingVideoListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowingVideoListVC.m; sourceTree = "<group>"; };
+		965DC0F31C8FDFAE00272538 /* AVFoundation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AVFoundation.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,12 +99,25 @@
 		89601A171C7B5D2E0032B52F /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				965DC0ED1C8FDE2400272538 /* AVFoundation */,
 				89601A181C7B660B0032B52F /* Controller.h */,
 				89601A191C7B666D0032B52F /* RegularExpressionVC.h */,
 				89601A1A1C7B666D0032B52F /* RegularExpressionVC.m */,
 				89601A1B1C7B666D0032B52F /* RegularExpressionVC.xib */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		965DC0ED1C8FDE2400272538 /* AVFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				965DC0EE1C8FDE5100272538 /* ShowingVideoListVC.h */,
+				965DC0EF1C8FDE5100272538 /* ShowingVideoListVC.m */,
+				965DC0F31C8FDFAE00272538 /* AVFoundation.storyboard */,
+				9608F4AF1C900151006A078E /* VideoCell.h */,
+				9608F4B01C900151006A078E /* VideoCell.m */,
+			);
+			path = AVFoundation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -157,6 +178,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				89601A101C7B5B060032B52F /* LaunchScreen.storyboard in Resources */,
+				965DC0F41C8FDFAE00272538 /* AVFoundation.storyboard in Resources */,
 				89601A0D1C7B5B060032B52F /* Assets.xcassets in Resources */,
 				89601A0B1C7B5B060032B52F /* Main.storyboard in Resources */,
 				89601A1D1C7B666D0032B52F /* RegularExpressionVC.xib in Resources */,
@@ -171,9 +193,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				89601A081C7B5B060032B52F /* NaviagationVC.m in Sources */,
+				9608F4B11C900151006A078E /* VideoCell.m in Sources */,
 				89601A051C7B5B060032B52F /* AppDelegate.m in Sources */,
 				89601A021C7B5B060032B52F /* main.m in Sources */,
 				89601A1C1C7B666D0032B52F /* RegularExpressionVC.m in Sources */,
+				965DC0F01C8FDE5100272538 /* ShowingVideoListVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +348,7 @@
 				89601A161C7B5B060032B52F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

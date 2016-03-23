@@ -39,7 +39,8 @@ typedef enum  {
 #pragma mark - Private Methods
 - (void) initView {
     _listSectionContent = @[
-                            kCellTitleAboutRegularExpression
+                            kCellTitleAboutRegularExpression,
+                            kCellTitleAboutAVFoundation
                             ];
 }
 
@@ -66,6 +67,11 @@ typedef enum  {
     NSString *objIndex = [_listSectionContent objectAtIndex:indexPath.row];
     if ([objIndex isEqualToString:kCellTitleAboutRegularExpression]) {
         RegularExpressionVC *vc = [[RegularExpressionVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    
+    if ([objIndex isEqualToString:kCellTitleAboutAVFoundation]) {
+        ShowingVideoListVC *vc = [[ShowingVideoListVC alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }
 }
