@@ -16,9 +16,11 @@ Chung.
 #Where I learn from
 
 [Apple Document](https://developer.apple.com/library/ios/navigation/)
+[Fabric](https://www.fabric.com/)
 
 #What's next ?
-
+- integrate Crashlytics of Fabric into my app on App Store
+- practise on AVFoundation
 
 #Reach me
 
