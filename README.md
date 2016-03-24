@@ -10,7 +10,7 @@ Thank,
 Chung.
 
 #Index
-[Regular Expression](https://github.com/chungbd/iOS-Practise-Example/tree/dev/obj/obj-Practise)
+[Regular Expression](https://github.com/chungbd/iOS-Practise-Example/tree/dev/obj/RegularExpression)
 
 
 #Where I learn from
