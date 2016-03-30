@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NSURLSession *connectionNew;
 @property (nonatomic, strong) NSHTTPURLResponse *response;
 @property (nonatomic, strong) NSMutableArray *pendingRequests;
+@property (strong, nonatomic) NSString *cachedFilePath;
 @property (weak, nonatomic) IBOutlet UIView *viewContent;
 @end
 
@@ -46,6 +47,10 @@
     [self.viewContent.layer addSublayer:self.playerLayer];
 //    self.playerLayer.hidden = true;
     
+    self.cachedFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cached.mp3"];
+    
+    
+    
     
 //    [self.player addObserver:self
 //                  forKeyPath:kPlayerRate
@@ -66,15 +71,27 @@
 
 }
 - (IBAction)btnt:(id)sender {
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[self songURLWithCustomScheme:@"streaming"] options:nil];
-    [asset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
+    NSURL *url = [NSURL fileURLWithPath:self.cachedFilePath];
     
-    self.pendingRequests = [NSMutableArray array];
-    
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
-   [self.player replaceCurrentItemWithPlayerItem:playerItem];
-//    self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
-    [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    // If the expected store doesn't exist, copy the default store.
+    if (![fileManager fileExistsAtPath:[url path]]) {
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[self songURLWithCustomScheme:@"streaming"] options:nil];
+        [asset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
+        
+        self.pendingRequests = [NSMutableArray array];
+        
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+        [self.player replaceCurrentItemWithPlayerItem:playerItem];
+        //    self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
+        [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
+    } else {
+//        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
+//        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:url];
+        [self.player replaceCurrentItemWithPlayerItem:playerItem];
+        [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -83,21 +100,44 @@
 }
 
 #pragma mark - Private Methods
-- (NSURL *)songURL
-{
-    return [NSURL URLWithString:@"http://cdn.showroomapp.tv/videos/video_600_82f8bafabce1e42086a53ec61029c813.mp4"];
+- (NSURL *)songURL {
+//    return [NSURL URLWithString:@"http://cdn.showroomapp.tv/videos/video_400_82f8bafabce1e42086a53ec61029c813.mp4"];
+    return [NSURL URLWithString:@"http://mp3.zing.vn/download/song/Toi-La-Ai-Trong-Em-Doi-Thong-ERIK-ST-319/ZHJnyZmNWSaWLFByZDxyDGZm"];
 }
 
-- (NSURL *)songURLWithCustomScheme:(NSString *)scheme
-{
+- (NSURL *)songURLWithCustomScheme:(NSString *)scheme {
     NSURLComponents *components = [[NSURLComponents alloc] initWithURL:[self songURL] resolvingAgainstBaseURL:NO];
     components.scheme = scheme;
     
-    return [self songURL];
+    return [components URL];
+}
+
+- (void) doSaveFileAndChangPlayLocalFile {
+    NSString *cachedFilePath = self.cachedFilePath;
+    
+    [self.songData writeToFile:cachedFilePath atomically:YES];
+    
+    NSURL *filepath = [NSURL fileURLWithPath:cachedFilePath];
+//    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:cachedFilePath] options:nil];
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:filepath];
+//    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+    
+    CMTime currentTime = self.player.currentTime;
+    
+    [self.player.currentItem removeObserver:self forKeyPath:@"status"];
+    
+    [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
+    [self.player replaceCurrentItemWithPlayerItem:playerItem];
+    if (self.player.status == AVPlayerItemStatusReadyToPlay) {
+        [self.player seekToTime:currentTime completionHandler:^(BOOL finished) {
+            if (finished) {
+                
+            }
+        }];
+    }
 }
 
 #pragma mark - NSURLConnection delegate
-
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     self.songData = [NSMutableData data];
@@ -115,11 +155,10 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    
     [self processPendingRequests];
     
-    NSString *cachedFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cached.mp4"];
-    
-    [self.songData writeToFile:cachedFilePath atomically:YES];
+    [self doSaveFileAndChangPlayLocalFile];
 }
 
 #pragma mark - AVURLAsset resource loading
@@ -197,6 +236,7 @@
         NSURLComponents *actualURLComponents = [[NSURLComponents alloc] initWithURL:interceptedURL resolvingAgainstBaseURL:NO];
         actualURLComponents.scheme = @"http";
         
+        
         NSURLRequest *request = [NSURLRequest requestWithURL:[actualURLComponents URL]];
         self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
         [self.connection setDelegateQueue:[NSOperationQueue mainQueue]];
@@ -217,13 +257,26 @@
 
 #pragma KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //_log(@"playbackBufferFull -- Play video");
-            [self.player play];
-            self.playerLayer.hidden = false;
-            //[self.spin stopAnimating];
-        });
+    switch (self.player.currentItem.status) {
+        case AVPlayerItemStatusFailed:
+            NSLog(@"AVPlayerItemStatusFailed");
+            break;
+        case AVPlayerItemStatusReadyToPlay: {
+            NSLog(@"AVPlayerItemStatusReadyToPlay");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //_log(@"playbackBufferFull -- Play video");
+                [self.player play];
+                self.playerLayer.hidden = false;
+                //[self.spin stopAnimating];
+            });
+        }
+            break;
+        case AVPlayerItemStatusUnknown:
+            NSLog(@"AVPlayerItemStatusUnknown");
+            break;
+        default:
+            break;
     }
+
 }
 @end
