@@ -24,4 +24,6 @@ Chung.
 - practise on AVFoundation
 
 #Reach me
+- Email: chungbd90@gmail.com
+
 
