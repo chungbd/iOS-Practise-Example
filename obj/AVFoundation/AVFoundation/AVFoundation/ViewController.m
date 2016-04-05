@@ -28,49 +28,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-//    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[self songURLWithCustomScheme:@"streaming"] options:nil];
-//    [asset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
-//    
-//    self.pendingRequests = [NSMutableArray array];
-//    
-//    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
-//    self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
-//    [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
+    self.cachedFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cached.mp3"];
+}
 
+- (void)viewDidAppear:(BOOL)animated {
     self.player = [[AVPlayer alloc] init];
     self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     self.player.volume = 1.0;
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     self.playerLayer.frame = CGRectMake(0, 0, 1024, 768);
-//    self.playerLayer.backgroundColor = [UIColor clearColor].CGColor;
+    //    self.playerLayer.backgroundColor = [UIColor clearColor].CGColor;
     [self.viewContent.layer addSublayer:self.playerLayer];
-//    self.playerLayer.hidden = true;
-    
-    self.cachedFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cached.mp3"];
     
     
-    
-    
-//    [self.player addObserver:self
-//                  forKeyPath:kPlayerRate
-//                     options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-//                     context:nil];
-//    
-//    typeof(self) __self = self;
-//    self.timerPlayer = [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1, 1)
-//                                                                 queue:dispatch_get_main_queue()
-//                                                            usingBlock:^(CMTime time) {
-//                                                                if (__self && __self.delegate && [self.delegate respondsToSelector:@selector(videoPlayer:playingAt:)]) {
-//                                                                    [__self.delegate videoPlayer:__self playingAt:CMTimeGetSeconds(time)];
-//                                                                    if(CMTimeGetSeconds(time) > 0) {
-//                                                                        [__self.spin stopAnimating];
-//                                                                    }
-//                                                                }
-//                                                            }];
-
+    [self touchUpInside_btn:nil];
 }
-- (IBAction)btnt:(id)sender {
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - IB Outlet Action 
+- (IBAction)touchUpInside_btn:(id)sender {
     NSURL *url = [NSURL fileURLWithPath:self.cachedFilePath];
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -86,18 +67,14 @@
         //    self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
         [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
     } else {
-//        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
-//        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+        //        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
+        //        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
         AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:url];
         [self.player replaceCurrentItemWithPlayerItem:playerItem];
         [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
     }
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 #pragma mark - Private Methods
 - (NSURL *)songURL {
@@ -228,14 +205,11 @@
 }
 
 
-- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
-{
-    if (self.connection == nil)
-    {
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
+    if (self.connection == nil) {
         NSURL *interceptedURL = [loadingRequest.request URL];
         NSURLComponents *actualURLComponents = [[NSURLComponents alloc] initWithURL:interceptedURL resolvingAgainstBaseURL:NO];
         actualURLComponents.scheme = @"http";
-        
         
         NSURLRequest *request = [NSURLRequest requestWithURL:[actualURLComponents URL]];
         self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
@@ -255,7 +229,7 @@
 }
 
 
-#pragma KVO
+#pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     switch (self.player.currentItem.status) {
         case AVPlayerItemStatusFailed:
@@ -264,10 +238,8 @@
         case AVPlayerItemStatusReadyToPlay: {
             NSLog(@"AVPlayerItemStatusReadyToPlay");
             dispatch_async(dispatch_get_main_queue(), ^{
-                //_log(@"playbackBufferFull -- Play video");
                 [self.player play];
                 self.playerLayer.hidden = false;
-                //[self.spin stopAnimating];
             });
         }
             break;
