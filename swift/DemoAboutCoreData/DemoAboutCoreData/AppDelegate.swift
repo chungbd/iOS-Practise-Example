@@ -8,7 +8,7 @@
 
 import UIKit
 
-let _dataController = DataController.defaultData
+let _dataController = DataController.shareInstance
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

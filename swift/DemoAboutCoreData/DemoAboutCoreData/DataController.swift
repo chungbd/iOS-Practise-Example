@@ -13,7 +13,7 @@ import CoreData
 class DataController: NSObject {
     var managedObjectContext: NSManagedObjectContext
 
-    static let defaultData = DataController()
+    static let shareInstance = DataController()
 
     override init() {
         // This resource is the same name as your xcdatamodeld contained in your project.
@@ -43,18 +43,25 @@ class DataController: NSObject {
         }
     }
 
-    func saveContextState() -> Void {
-        do {
-            try managedObjectContext.save()
-        } catch {
-            fatalError("Failure to save context: \(error)")
+    class func saveContextState() -> Void {
+        if _dataController.managedObjectContext.hasChanges {
+            do {
+                try _dataController.managedObjectContext.save()
+            } catch {
+                fatalError("Failure to save context: \(error)")
+            }
         }
     }
 
-    func createAndSaveWith(userName: String) -> Void {
-        let employee = NSEntityDescription.insertNewObjectForEntityForName("Person", inManagedObjectContext:managedObjectContext) as! Person
+    class func createAndSaveWith(userName: String) -> Void {
+        let employee = NSEntityDescription.insertNewObjectForEntityForName("Person", inManagedObjectContext:_dataController.managedObjectContext) as! Person
         employee.name = userName
 
+        saveContextState()
+    }
+
+    class func deleteObject(with object:NSManagedObject) -> Void {
+        _dataController.managedObjectContext.deleteObject(object)
         saveContextState()
     }
 
@@ -63,8 +70,7 @@ class DataController: NSObject {
         let employeesFetch = NSFetchRequest(entityName: "Person")
 
         do {
-            let fetchedEmployees = try moc.executeFetchRequest(employeesFetch) 
-
+            let fetchedEmployees = try moc.executeFetchRequest(employeesFetch)
             return fetchedEmployees
         } catch {
             fatalError("Failed to fetch employees: \(error)")
