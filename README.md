@@ -10,14 +10,13 @@ Thank,
 Chung.
 
 #Index
-[Regular Expression](https://github.com/chungbd/iOS-Practise-Example/tree/dev/obj/RegularExpression)
-
+1. [Regular Expression](https://github.com/chungbd/iOS-Practise-Example/tree/dev/obj/RegularExpression)
+2. [Core Data](https://github.com/chungbd/iOS-Practise-Example/tree/master/swift/DemoAboutCoreData)
 
 #Where I learn from
 
-[Apple Document](https://developer.apple.com/library/ios/navigation/)
-
-[Fabric](https://www.fabric.com/)
+1. [Apple Document](https://developer.apple.com/library/ios/navigation/)
+2. [Fabric](https://www.fabric.com/)
 
 #What's next ?
 - integrate Crashlytics of Fabric into my app on App Store
