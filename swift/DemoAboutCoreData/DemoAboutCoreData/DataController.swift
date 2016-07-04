@@ -54,8 +54,8 @@ class DataController: NSObject {
     }
 
     class func createAndSaveWith(userName: String) -> Void {
-        let employee = NSEntityDescription.insertNewObjectForEntityForName("Person", inManagedObjectContext:_dataController.managedObjectContext) as! Person
-        employee.name = userName
+        let person = NSEntityDescription.insertNewObjectForEntityForName("Person", inManagedObjectContext:_dataController.managedObjectContext) as! Person
+        person.name = userName
 
         saveContextState()
     }
@@ -67,13 +67,13 @@ class DataController: NSObject {
 
     func getAllUserName() -> [AnyObject]? {
         let moc = managedObjectContext
-        let employeesFetch = NSFetchRequest(entityName: "Person")
+        let personFetch = NSFetchRequest(entityName: "Person")
 
         do {
-            let fetchedEmployees = try moc.executeFetchRequest(employeesFetch)
-            return fetchedEmployees
+            let fetchedPersons = try moc.executeFetchRequest(personFetch)
+            return fetchedPersons
         } catch {
-            fatalError("Failed to fetch employees: \(error)")
+            fatalError("Failed to fetch persons: \(error)")
         }
 
         return nil
